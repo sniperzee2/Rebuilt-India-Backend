@@ -21,7 +21,7 @@ app.use('/api/faqs', require('./routers/faqRouter'))
 app.use('/api/blogs', require('./routers/blogRouter'))
 app.use('/api/forms', require('./routers/formRouter'))
 
-const port = process.env.port || 8000
-app.listen(port, () => {
+const port = process.env.PORT || 8000
+app.listen(port,() => {
   console.log(`Server running on PORT ${port}`)
 })
