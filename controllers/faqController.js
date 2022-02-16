@@ -74,7 +74,7 @@ exports.editFaq = async (req, res) => {
                 answer: req.body.answer || f.answer,
                 icon: `${req.protocol}://${req.get(
                     "host"
-                  )}/images/${req.file.filename.replace(/ /g, "_")}` || f.icon
+                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || f.icon
             },{new: true});
         res.status(200).json({
             message: "Faq Updated Successfully",

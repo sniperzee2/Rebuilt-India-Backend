@@ -19,6 +19,7 @@ app.use('/api/services', require('./routers/servicesRouter'))
 app.use('/api/subservices', require('./routers/subservicesRouter'))
 app.use('/api/faqs', require('./routers/faqRouter'))
 app.use('/api/blogs', require('./routers/blogRouter'))
+app.use('/api/companyFAQs', require('./routers/companyFaqRouter'))
 app.use('/api/forms', require('./routers/formRouter'))
 
 const port = process.env.PORT || 8000

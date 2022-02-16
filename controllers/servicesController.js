@@ -70,7 +70,7 @@ exports.editService = async (req, res) => {
                 description: req.body.description || s.description,
                 image: `${req.protocol}://${req.get(
                     "host"
-                  )}/images/${req.file.filename.replace(/ /g, "_")}` || s.image,
+                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || s.image,
             },{new: true});
         res.status(200).json({
             message: "Service Updated Successfully",

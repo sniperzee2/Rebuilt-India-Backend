@@ -85,7 +85,7 @@ exports.editBlog = async (req, res) => {
                 author: req.body.author || b.author,
                 image: `${req.protocol}://${req.get(
                     "host"
-                  )}/images/${req.file.filename.replace(/ /g, "_")}` || b.image,
+                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || b.image,
             },{new: true});
         res.status(200).json({
             message: "Blog Updated Successfully",
