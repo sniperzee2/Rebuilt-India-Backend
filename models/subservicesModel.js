@@ -4,11 +4,18 @@ const subserviceSchema = new mongoose.Schema({
     name: {
         type: String,
     },
-    description: {
+    mainDescription: {
         type: String,
     },
+    points:[{
+        type: String,
+    }],
     image:{
         type: String,
+    },
+    discount:{
+        type: Number,
+        default: 0
     }
 }, {
   timestamps: true

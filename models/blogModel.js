@@ -12,6 +12,9 @@ const blogSchema = new mongoose.Schema({
     },
     image:{
         type: String,
+    },
+    date:{
+        type: String,
     }
 
 }, {

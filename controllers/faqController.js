@@ -6,7 +6,10 @@ exports.createFaq = async (req, res) => {
         const {question,answer,serviceID} = req.body;
         const faq = new Faq({
             question,
-            answer
+            answer,
+            icon: `${req.protocol}://${req.get(
+                "host"
+              )}/images/${req.file.filename.replace(/ /g, "_")}`
         });
         const faqCreated = await faq.save();
         const service = await Service.findById(serviceID).populate('faqs');
@@ -65,9 +68,13 @@ exports.getFaqsByID = async (req, res) => {
 
 exports.editFaq = async (req, res) => {
     try{
+            const f = await Faq.findById(req.params.id);
             const faq = await Faq.findByIdAndUpdate(req.params.id, {
-                question: req.body.question,
-                answer: req.body.answer
+                question: req.body.question || f.question,
+                answer: req.body.answer || f.answer,
+                icon: `${req.protocol}://${req.get(
+                    "host"
+                  )}/images/${req.file.filename.replace(/ /g, "_")}` || f.icon
             },{new: true});
         res.status(200).json({
             message: "Faq Updated Successfully",

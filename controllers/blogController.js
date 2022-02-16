@@ -11,6 +11,7 @@ exports.createBlog = async (req, res) => {
             image: `${req.protocol}://${req.get(
                 "host"
               )}/images/${req.file.filename.replace(/ /g, "_")}`,
+            date: new Date().toISOString(),
         });
         const blogCreated = await blog.save();
 
