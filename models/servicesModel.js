@@ -22,6 +22,10 @@ const serviceSchema = new mongoose.Schema({
     faqs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'faq'
+    }],
+    problems: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'problem'
     }]
 
 }, {

@@ -16,6 +16,9 @@ const subserviceSchema = new mongoose.Schema({
     discount:{
         type: Number,
         default: 0
+    },
+    price:{
+        type: Number
     }
 }, {
   timestamps: true
