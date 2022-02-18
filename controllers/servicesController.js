@@ -32,7 +32,7 @@ exports.createService = async (req, res) => {
 
 exports.getServices = async (req, res) => {
     try{
-        const services = await Service.find().populate('subServices').populate('faqs').populate('blogs');
+        const services = await Service.find().populate('subServices').populate('faqs').populate('blogs').populate('problems');
         res.status(200).json({
             message: "Services Fetched Successfully",
             data: services
@@ -48,7 +48,7 @@ exports.getServices = async (req, res) => {
 
 exports.getServicesByID = async (req, res) => {
     try{
-        const service = await Service.findById(req.params.id).populate('subServices').populate('faqs').populate('blogs');
+        const service = await Service.findById(req.params.id).populate('subServices').populate('faqs').populate('blogs').populate('problems');
         res.status(200).json({
             message: "Service Fetched Successfully",
             data: service
