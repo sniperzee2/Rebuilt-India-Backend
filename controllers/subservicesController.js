@@ -8,9 +8,7 @@ exports.createSubService = async (req, res) => {
         const subService = new SubService({
             name,
             mainDescription,
-            image: `${req.protocol}://${req.get(
-                "host"
-              )}/images/${req.file.filename.replace(/ /g, "_")}`,
+            image: `/images/${req.file.filename.replace(/ /g, "_")}`,
             points,
             discount,
             price
@@ -84,9 +82,7 @@ exports.editSubService = async (req, res) => {
             const subService = await SubService.findByIdAndUpdate(req.params.id, {
                 name: req.body.name || sub.name,
                 description: req.body.description || sub.description,
-                image: `${req.protocol}://${req.get(
-                    "host"
-                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || sub.image,
+                image: `/images/${req.file?.filename.replace(/ /g, "_")}` || sub.image,
                 discount: req.body.discount || sub.discount,
                 points: req.body.points || sub.points,
                 price: req.body.price || sub.price

@@ -7,9 +7,7 @@ exports.createFaq = async (req, res) => {
         const faq = new Faq({
             question,
             answer,
-            icon: `${req.protocol}://${req.get(
-                "host"
-              )}/images/${req.file.filename.replace(/ /g, "_")}`
+            icon: `/images/${req.file.filename.replace(/ /g, "_")}`
         });
         const faqCreated = await faq.save();
         const service = await Service.findById(serviceID).populate('faqs');
@@ -72,9 +70,7 @@ exports.editFaq = async (req, res) => {
             const faq = await Faq.findByIdAndUpdate(req.params.id, {
                 question: req.body.question || f.question,
                 answer: req.body.answer || f.answer,
-                icon: `${req.protocol}://${req.get(
-                    "host"
-                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || f.icon
+                icon: `/images/${req.file?.filename.replace(/ /g, "_")}` || f.icon
             },{new: true});
         res.status(200).json({
             message: "Faq Updated Successfully",

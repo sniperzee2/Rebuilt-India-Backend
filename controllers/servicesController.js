@@ -6,9 +6,7 @@ exports.createService = async (req, res) => {
         const service = new Service({
             name,
             description,
-            image: `${req.protocol}://${req.get(
-                "host"
-              )}/images/${req.file.filename.replace(/ /g, "_")}`,
+            image: `/images/${req.file.filename.replace(/ /g, "_")}`,
         });
         const serviceCreated = await service.save();
         if (serviceCreated) {
@@ -68,9 +66,7 @@ exports.editService = async (req, res) => {
             const service = await Service.findByIdAndUpdate(req.params.id, {
                 name: req.body.name || s.name,
                 description: req.body.description || s.description,
-                image: `${req.protocol}://${req.get(
-                    "host"
-                  )}/images/${req.file?.filename.replace(/ /g, "_")}` || s.image,
+                image: `/images/${req.file?.filename.replace(/ /g, "_")}` || s.image,
             },{new: true});
         res.status(200).json({
             message: "Service Updated Successfully",
