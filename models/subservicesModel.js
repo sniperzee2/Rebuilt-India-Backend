@@ -18,11 +18,12 @@ const subserviceSchema = new mongoose.Schema({
         default: 0
     },
     price:{
-        type: Number
+        type: Number,
+        default: 0
     }
 }, {
   timestamps: true
 });
 
 
-module.exports = mongoose.model('subservice', subserviceSchema)
+module.exports = mongoose.model('Subservice', subserviceSchema)

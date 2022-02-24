@@ -13,19 +13,19 @@ const serviceSchema = new mongoose.Schema({
     },
     subServices: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'subservice'
+        ref: 'Subservice'
     }],
     blogs: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'blog'
+        ref: 'Blog'
     }],
     faqs: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'faq'
+        ref: 'Faq'
     }],
     problems: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'problem'
+        ref: 'Problem'
     }]
 
 }, {
@@ -33,4 +33,4 @@ const serviceSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('service', serviceSchema)
+module.exports = mongoose.model('Service', serviceSchema)

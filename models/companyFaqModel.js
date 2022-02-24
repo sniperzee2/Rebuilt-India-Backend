@@ -12,4 +12,4 @@ const companyfaqSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('companyfaq', companyfaqSchema)
+module.exports = mongoose.model('Companyfaq', companyfaqSchema)
