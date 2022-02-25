@@ -6,24 +6,24 @@ const bookingSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Service",
     },
-    subService:{
+    subservice:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Subservice",
     },
     status:{
         type: String,
+        default: "Open"
     },
+    category:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+    },
+    issues:[{
+        type: String
+    }],
     quantity:{
         type: Number,
         default: 1
-    },
-    priceToPay:{
-        type: Number,
-        default: 0
-    },
-    user:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
     },
     technichianName:{
         type: String,

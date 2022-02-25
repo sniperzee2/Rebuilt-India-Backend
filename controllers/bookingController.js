@@ -1,38 +1,31 @@
 const Booking = require("../models/bookingsModel");
-const Service = require("../models/servicesModel");
-const SubService = require("../models/subservicesModel");
+const Fullbooking = require("../models/fullBookingInfo");
 const User = require("../models/userModel");
 
 exports.createBookings = async (req, res) => {
     try{
-        const {serviceID, subServiceID, quantity, priceToPay, technicianName, technicianNumber} = req.body;
-        const booking = new Booking({
-            service: serviceID,
-            subService: subServiceID,
-            user: req.user.id,
-            quantity,
-            priceToPay,
-            technicianName,
-            technicianNumber,
-            status: "Open"
-        });
-        const bookingCreated = await booking.save();
-        const Book = await Booking.findById(bookingCreated._id).populate("service").populate("subService").populate("user");
-        console.log(req.user)
-        const userHistoryAdded = await req.user.history.push(bookingCreated._id);
-        const userUpdated = await User.findByIdAndUpdate(req.user.id, {history: req.user.history}, {new: true});
-        
-        if (bookingCreated && userHistoryAdded && userUpdated) {
+        const All = req.body.allBookings
+        let b = []
+        let fullBooking = await Fullbooking.create({
+            priceToPay: req.body.priceToPay,
+            user: req.body.userID
+        })
+        for(let i =0; i<All.length; i++){
+            let booking = await Booking.create(All[i])
+            fullBooking.bookings.push(booking)
+            await fullBooking.save()
+        }
+        const user = await User.findById(req.body.userID).populate("history");
+        user.history.push(fullBooking)
+        const userSaved = await user.save()
+        if(fullBooking && userSaved){
             res.status(200).json({
-                message: "Booking Created and added to User History Successfully",
-                data: {
-                    booking: Book,
-                    user: userUpdated
-                }
-            });
-        } else {
+                message: "Bookings Created Successfully",
+                data: fullBooking
+            })
+        }else{
             res.status(400).json({
-                message: "Booking Creation Failed"
+                message: "Bookings Creation Failed"
             })
         }
     }catch(err){
@@ -46,15 +39,27 @@ exports.createBookings = async (req, res) => {
 
 exports.showAllBookingsToAdmin = async (req, res) => {
     try{
-        const bookings = await Booking.find().populate("service").populate("subService").populate("user");
-        if (bookings) {
+        const fullBookings = await Fullbooking.find().populate("user").populate({
+            path: "bookings",
+            populate: [{
+                path: "service",
+                model: "Service"
+            },{
+                path: "subservice",
+                model: "Subservice"
+            },{
+                path: "category",
+                model: "Category"
+            }]
+        });
+        if(fullBookings){
             res.status(200).json({
                 message: "All Bookings Fetched Successfully",
-                data: bookings
-            });
-        } else {
+                data: fullBookings
+            })
+        }else{
             res.status(400).json({
-                message: "No Bookings Found"
+                message: "Fetching Bookings Failed"
             })
         }
     }catch(err){
@@ -75,17 +80,47 @@ exports.editBookingByAdmin = async (req, res) => {
             })
         }
         if(req.admin.role === "admin"){
-            const bookingUpdated = await Booking.findByIdAndUpdate(req.params.id, {
-                quantity: req.body.quantity || booking.quantity,
-                priceToPay: req.body.priceToPay || booking.priceToPay,
-                technichianName: req.body.technichianName || booking.technichianName,
-                technichianNumber: req.body.technichianNumber || booking.technichianNumber,
-                status: req.body.status || booking.status
-            }, {new: true});
+            const bookingUpdated = await Booking.findByIdAndUpdate(req.params.id,req.body, {new: true});
             if(bookingUpdated){
                 return res.status(200).json({
                     message: "Booking Updated Successfully",
                     data: bookingUpdated
+                })
+            }
+            res.status(400).json({
+                message: "Booking Update Failed"
+            })
+        }else{
+            res.status(400).json({
+                message: "You are not authorized to perform this action"
+            })
+        }
+    }catch(err){
+        console.log(err)
+        res.status(500).json({
+            status: "error",
+            message: err.message
+        })
+    }
+}
+
+exports.addAdditionBookingsFromAdmin = async (req, res) => {
+    try{
+        const FullBooking = await Fullbooking.findById(req.params.id);
+        if(!FullBooking){
+            return res.status(404).json({
+                message: "Booking not found"
+            })
+        }
+        if(req.admin.role === "admin"){
+            const booking = await Booking.create(req.body)
+            FullBooking.bookings.push(booking)
+            FullBooking.totalPrice = req.body.totalPrice
+            const fullBookingUpdated = await FullBooking.save()
+            if(fullBookingUpdated){
+                return res.status(200).json({
+                    message: "Booking Updated Successfully",
+                    data: fullBookingUpdated
                 })
             }
             res.status(400).json({

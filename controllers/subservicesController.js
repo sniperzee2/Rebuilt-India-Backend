@@ -3,7 +3,7 @@ const Service = require("../models/servicesModel");
 
 exports.createSubService = async (req, res) => {
     try{
-        const {name, mainDescription,serviceID,points,discount,price} = req.body;
+        const {name, mainDescription,serviceID,points,discount} = req.body;
 
         const subService = new SubService({
             name,
@@ -11,7 +11,6 @@ exports.createSubService = async (req, res) => {
             image: `/images/${req.file.filename.replace(/ /g, "_")}`,
             points,
             discount,
-            price
         });
         const serviceCreated = await subService.save();
 
@@ -85,7 +84,6 @@ exports.editSubService = async (req, res) => {
                 image: `/images/${req.file?.filename.replace(/ /g, "_")}` || sub.image,
                 discount: req.body.discount || sub.discount,
                 points: req.body.points || sub.points,
-                price: req.body.price || sub.price
             },{new: true});
         res.status(200).json({
             message: "SubService Updated Successfully",

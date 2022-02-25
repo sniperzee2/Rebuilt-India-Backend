@@ -26,6 +26,10 @@ const serviceSchema = new mongoose.Schema({
     problems: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Problem'
+    }],
+    rates:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Rate'
     }]
 
 }, {

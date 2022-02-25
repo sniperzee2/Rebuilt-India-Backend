@@ -18,9 +18,19 @@ const subserviceSchema = new mongoose.Schema({
         default: 0
     },
     price:{
-        type: Number,
-        default: 0
-    }
+        type: String,
+    },
+    categories:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
+    }],
+    // process:[{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Process'
+    // }],
+    issues:[{
+        type: String
+    }]
 }, {
   timestamps: true
 });

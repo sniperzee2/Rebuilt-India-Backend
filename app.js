@@ -18,8 +18,10 @@ app.use(express.json())
 app.use('/images', express.static(path.join(__dirname + '/Images')));
 
 app.use('/api/services', require('./routers/servicesRouter'))
+app.use('/api/rates', require('./routers/rateRouter'))
 app.use('/api/subservices', require('./routers/subservicesRouter'))
 app.use('/api/faqs', require('./routers/faqRouter'))
+app.use('/api/categories', require('./routers/categoryRouter'))
 app.use('/api/blogs', require('./routers/blogRouter'))
 app.use('/api/problems', require('./routers/commonProblemsRouter'))
 app.use('/api/companyFAQs', require('./routers/companyFaqRouter'))
