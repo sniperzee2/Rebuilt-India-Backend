@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const path = require('path')
 const cors = require('cors')
 const {connectDB} = require('./config/db')
-require('dotenv').config({path: 'config.env'})
+require('dotenv').config()
 
 const app = express()
 
