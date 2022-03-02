@@ -26,6 +26,7 @@ const createSendToken = (user, statusCode, res) => {
     });
 };
 
+//OTP send called and create hash and send otp
 exports.SendOTP = async (req, res, next) => {
     const { phone } = req.body;
     if(!phone) return res.status(400).json({ message: "Phone number is required" });
@@ -47,6 +48,7 @@ exports.SendOTP = async (req, res, next) => {
     }
 };
 
+//Verify hashed token and OTP
 exports.VerifyOTPOnSignUp = async (req, res, next) => {
     const {otp,hash,phone,name,email,address,password} = req.body;
     console.log(hash)
@@ -82,6 +84,7 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
     }
 };
 
+//Login via email and password
 exports.loginWithEmail = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -118,6 +121,7 @@ exports.loginWithEmail = async (req, res, next) => {
     }
 };
 
+//Login via phone and OTP
 exports.loginWithPhone = async (req, res, next) => {
     try {
         const {otp,hash,phone} = req.body;
@@ -143,6 +147,7 @@ exports.loginWithPhone = async (req, res, next) => {
     }
 }
 
+//Forget password
 exports.forgotPassword = async(req, res, next) => {
     // 1) Get user based on POSTed email
     const user = await User.findOne({ email: req.body.email })
@@ -186,6 +191,7 @@ exports.forgotPassword = async(req, res, next) => {
     }
 }
 
+//Reset password
 exports.resetPassword = async(req, res, next) => {
     // 1) Get user based on the token
     const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex")

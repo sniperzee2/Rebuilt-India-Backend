@@ -3,10 +3,11 @@ const SubService = require("../models/subservicesModel");
 
 exports.createCategory = async (req, res) => {
     try{
-        const {name,price,subserviceID} = req.body;
+        const {name,price,subserviceID,image} = req.body;
         const category = new Category({
             name,
-            price
+            price,
+            image:`images/${image}`
         })
         const c = await category.save();
         const subservice = await SubService.findById(subserviceID).populate('categories');

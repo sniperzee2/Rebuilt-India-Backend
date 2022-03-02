@@ -3,13 +3,14 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/email");
 
-
+//Signing the token with the secret key
 const signToken = (data) => {
     return jwt.sign(data, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 };
 
+//Creating the token and sending it to the client
 const createSendToken = (admin, statusCode, res) => {
     const { id } = admin;
     const data = {
@@ -24,10 +25,11 @@ const createSendToken = (admin, statusCode, res) => {
     });
 };
 
+//Registration of the admin
 exports.registerAdmin = async (req, res, next) => {
     try {
         const { email, password, name } = req.body;
-        let regex = new RegExp('[a-z0-9]+@rebuiltindia.com');
+        let regex = new RegExp('[a-z0-9]+@rebuiltindia.com'); //checking for the email
         if (!email || !password || !name) {
             return res.status(404).json({
                 status: "fail",
@@ -47,7 +49,7 @@ exports.registerAdmin = async (req, res, next) => {
                 email,
                 password,
                 name,
-                role: "viewer",
+                role: "viewer",//if regex fails then role is set to viewer
             });
         }else{
             newAdmin = await Admin.create(req.body);
@@ -72,6 +74,7 @@ exports.registerAdmin = async (req, res, next) => {
     }
 }
 
+//login the admin
 exports.loginWithEmailAdmin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -106,6 +109,7 @@ exports.loginWithEmailAdmin = async (req, res, next) => {
     }
 };
 
+//Foeget password
 exports.forgotPassword = async(req, res, next) => {
     // 1) Get admin based on POSTed email
     const admin = await Admin.findOne({ email: req.body.email })
@@ -117,7 +121,7 @@ exports.forgotPassword = async(req, res, next) => {
     }
 
     // 2) Generate the random reset token
-    const resetToken = admin.createPasswordResetToken()
+    const resetToken = admin.createPasswordResetToken() //creating reset token for password
     await admin.save({ validateBeforeSave: false })
 
     // 3) Send it to admin's email
@@ -126,6 +130,7 @@ exports.forgotPassword = async(req, res, next) => {
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`
 
     try {
+        //sending mail for password reset
         await sendEmail({
             email: admin.email,
             subject: "Your password reset token (valid for 10 min)",
@@ -175,6 +180,7 @@ exports.resetPassword = async(req, res, next) => {
     createSendToken(admin, 200, res)
 }
 
+//geting admin by token
 exports.getAdminByToken = async (req, res, next) => {
     try {
         const admin = req.admin;

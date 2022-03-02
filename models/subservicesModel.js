@@ -13,6 +13,9 @@ const subserviceSchema = new mongoose.Schema({
     image:{
         type: String,
     },
+    headerImg:{
+        type: String,
+    },
     discount:{
         type: Number,
         default: 0
@@ -24,10 +27,10 @@ const subserviceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
     }],
-    // process:[{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Process'
-    // }],
+    process:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Process'
+    }],
     issues:[{
         type: String
     }]

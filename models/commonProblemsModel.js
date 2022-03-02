@@ -6,6 +6,9 @@ const problemSchema = new mongoose.Schema({
     },
     answer: {
         type: String,
+    },
+    icon:{
+        type: String,
     }
 }, {
   timestamps: true

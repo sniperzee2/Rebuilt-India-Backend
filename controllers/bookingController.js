@@ -37,6 +37,7 @@ exports.createBookings = async (req, res) => {
     }
 }
 
+//Get all the bookings of a user
 exports.showAllBookingsToAdmin = async (req, res) => {
     try{
         const fullBookings = await Fullbooking.find().populate("user").populate({
@@ -104,6 +105,7 @@ exports.editBookingByAdmin = async (req, res) => {
     }
 }
 
+//Add a new booking from admin side
 exports.addAdditionBookingsFromAdmin = async (req, res) => {
     try{
         const FullBooking = await Fullbooking.findById(req.params.id);
@@ -114,7 +116,7 @@ exports.addAdditionBookingsFromAdmin = async (req, res) => {
         }
         if(req.admin.role === "admin"){
             const booking = await Booking.create(req.body)
-            FullBooking.bookings.push(booking)
+            FullBooking.bookings.push(booking) //passing reference of booking to fullbooking
             FullBooking.totalPrice = req.body.totalPrice
             const fullBookingUpdated = await FullBooking.save()
             if(fullBookingUpdated){

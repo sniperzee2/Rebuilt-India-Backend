@@ -3,10 +3,11 @@ const Problem = require("../models/commonProblemsModel");
 
 exports.createProblem = async (req, res) => {
     try{
-        const {question,answer,serviceID} = req.body;
+        const {question,answer,serviceID,icon} = req.body;
         const problem = new Problem({
             question,
-            answer
+            answer,
+            icon: `/images/${icon}`
         });
         const problemCreated = await problem.save();
         const service = await Service.findById(serviceID).populate('problems');
@@ -69,6 +70,7 @@ exports.editProblem = async (req, res) => {
             const problem = await Problem.findByIdAndUpdate(req.params.id, {
                 question: req.body.question || f.question,
                 answer: req.body.answer || f.answer,
+                icon: req.body.icon || f.icon
             },{new: true});
         res.status(200).json({
             message: "Problem Updated Successfully",

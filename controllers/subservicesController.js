@@ -1,17 +1,30 @@
 const SubService = require("../models/subservicesModel");
 const Service = require("../models/servicesModel");
+const Process = require("../models/processModel");
 
 exports.createSubService = async (req, res) => {
     try{
-        const {name, mainDescription,serviceID,points,discount} = req.body;
-
+        const {name, mainDescription,serviceID,points,discount,processDes} = req.body;
+        console.log(req.files)
+        console.log(processDes)
         const subService = new SubService({
             name,
             mainDescription,
-            image: `/images/${req.file.filename.replace(/ /g, "_")}`,
+            image: `/images/${req.files[0].filename.replace(/ /g, "_")}`,
             points,
             discount,
+            headerImg: `/images/${req.files[1].filename.replace(/ /g, "_")}`,
         });
+
+        for(var i = 0; i < processDes.length; i++){
+            const process = new Process({
+                description: processDes[i],
+                image: `/images/${req.files[i+2].filename.replace(/ /g, "_")}`,
+            });
+            await process.save();
+            subService.process.push(process._id);
+        }
+        
         const serviceCreated = await subService.save();
 
         const service = await Service.findById(serviceID).populate('subServices');
@@ -81,9 +94,9 @@ exports.editSubService = async (req, res) => {
             const subService = await SubService.findByIdAndUpdate(req.params.id, {
                 name: req.body.name || sub.name,
                 description: req.body.description || sub.description,
-                image: `/images/${req.file?.filename.replace(/ /g, "_")}` || sub.image,
                 discount: req.body.discount || sub.discount,
                 points: req.body.points || sub.points,
+                price: req.body.price || sub.price,
             },{new: true});
         res.status(200).json({
             message: "SubService Updated Successfully",
