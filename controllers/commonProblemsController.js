@@ -70,7 +70,7 @@ exports.editProblem = async (req, res) => {
             const problem = await Problem.findByIdAndUpdate(req.params.id, {
                 question: req.body.question || f.question,
                 answer: req.body.answer || f.answer,
-                icon: req.body.icon || f.icon
+                icon: `/images/${req.body.icon}`|| f.icon
             },{new: true});
         res.status(200).json({
             message: "Problem Updated Successfully",
