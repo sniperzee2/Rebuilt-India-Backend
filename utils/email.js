@@ -11,7 +11,7 @@ const sendEmail = async options => {
             user: process.env.EMAIL, 
             pass: process.env.PASSWORD, 
         },
-        from: "shivanshjoshi277@gmail.com",
+        from: "rebuiltindia06@gmail.com",
         tls: {
             rejectUnauthorized: false
         }
@@ -19,7 +19,7 @@ const sendEmail = async options => {
 
     // 2) Define the email options
     const mailOptions = {
-        from: 'Rebuilt <shivanshjoshi277@gmail.com>',
+        from: 'Rebuilt Support <rebuiltindia06@gmail.com>',
         to: options.email,
         subject: options.subject,
         text: options.message
