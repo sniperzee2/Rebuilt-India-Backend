@@ -8,7 +8,9 @@ exports.createBookings = async (req, res) => {
         let b = []
         let fullBooking = await Fullbooking.create({
             priceToPay: req.body.priceToPay,
-            user: req.body.userID
+            user: req.body.userID,
+            date: req.body.date,
+            time: req.body.time,
         })
         for(let i =0; i<All.length; i++){
             let booking = await Booking.create(All[i])

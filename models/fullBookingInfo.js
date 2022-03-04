@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 const fullbookingSchema = new mongoose.Schema(
   {
-    Date:{
-        type: Date,
-        default: Date.now
+    date:{
+        type: String,
+    },
+    time:{
+        type: String,
     },
     bookings:[{
         type: mongoose.Schema.Types.ObjectId,
