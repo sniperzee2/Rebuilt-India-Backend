@@ -46,6 +46,7 @@ exports.SendOTP = async (req, res, next) => {
     try{
         await otpService.sendOtp(phone, otp);  
         res.status(200).json({
+            status: "Success",
             hash: `${otpHash}.${expires}`,
             phone,
             otp
