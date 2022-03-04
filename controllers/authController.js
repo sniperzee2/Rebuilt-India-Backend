@@ -50,7 +50,7 @@ exports.SendOTP = async (req, res, next) => {
 
 //Verify hashed token and OTP
 exports.VerifyOTPOnSignUp = async (req, res, next) => {
-    const {otp,hash,phone,name,email,address,password} = req.body;
+    const {otp,hash,phone,name,email,password} = req.body;
     console.log(hash)
     if(!otp || !hash || !phone) return res.status(400).json({ message: "Invalid request" });
     const [hashedOtp, expires] = hash.split('.');
@@ -71,7 +71,6 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
                 name,
                 email,
                 phone,
-                address,
                 password,
             })
             createSendToken(user, 200, res);
