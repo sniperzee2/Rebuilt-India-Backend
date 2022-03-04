@@ -32,10 +32,10 @@ exports.SendOTP = async (req, res, next) => {
     const userPhone = await User.findOne({ phone });
     const userEmail = await User.findOne({ email });
     if(userPhone){
-        return res.status(400).json({ message: "User already exists with this Phone number" });
+        return res.status(200).json({ message: "User already exists with this Phone number" });
     }
     if(userEmail){
-        return res.status(400).json({ message: "User already exists with this Email" });
+        return res.status(200).json({ message: "User already exists with this Email" });
     }
     if(!phone) return res.status(400).json({ message: "Phone number is required" });
     const otp = await otpService.generateOtp();
