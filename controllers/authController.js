@@ -28,7 +28,15 @@ const createSendToken = (user, statusCode, res) => {
 
 //OTP send called and create hash and send otp
 exports.SendOTP = async (req, res, next) => {
-    const { phone } = req.body;
+    const { phone,email } = req.body;
+    const userPhone = await User.findOne({ phone });
+    const userEmail = await User.findOne({ email });
+    if(userPhone){
+        return res.status(400).json({ message: "User already exists with this Phone number" });
+    }
+    if(userEmail){
+        return res.status(400).json({ message: "User already exists with this Email" });
+    }
     if(!phone) return res.status(400).json({ message: "Phone number is required" });
     const otp = await otpService.generateOtp();
     const expires = Date.now() + 1000*60*3;; 
