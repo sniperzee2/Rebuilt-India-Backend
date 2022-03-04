@@ -32,12 +32,12 @@ exports.SendOTP = async (req, res, next) => {
     const userPhone = await User.findOne({ phone });
     const userEmail = await User.findOne({ email });
     if(userPhone){
-        return res.status(200).json({ message: "User already exists with this Phone number" });
+        return res.status(200).json({ status: "Failed",message: "User already exists with this Phone number" });
     }
     if(userEmail){
-        return res.status(200).json({ message: "User already exists with this Email" });
+        return res.status(200).json({ status: "Failed",message: "User already exists with this Email" });
     }
-    if(!phone) return res.status(400).json({ message: "Phone number is required" });
+    if(!phone) return res.status(200).json({ status: "Failed",message: "Phone number is required" });
     const otp = await otpService.generateOtp();
     const expires = Date.now() + 1000*60*3;; 
     const data = `${phone}${otp}${expires}`;
