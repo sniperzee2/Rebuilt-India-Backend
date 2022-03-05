@@ -10,6 +10,13 @@ const bookingSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Subservice",
     },
+    description:{
+        type: String,
+    },
+    additionPrice:{
+        type: String,
+        default: "0"
+    },
     status:{
         type: String,
         default: "Open"

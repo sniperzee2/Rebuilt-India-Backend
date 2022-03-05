@@ -4,14 +4,15 @@ const Process = require("../models/processModel");
 
 exports.createSubService = async (req, res) => {
     try{
-        const {name, mainDescription,serviceID,points,discount,processDes} = req.body;
+        const {name, mainDescription,serviceID,discount,processDes} = req.body;
         console.log(req.files)
         console.log(processDes)
         const subService = new SubService({
             name,
             mainDescription,
             image: `/images/${req.files[0].filename.replace(/ /g, "_")}`,
-            points,
+            points: req.body.points || [],
+            issues: req.body.issues || [],
             discount,
             headerImg: `/images/${req.files[1].filename.replace(/ /g, "_")}`,
         });
