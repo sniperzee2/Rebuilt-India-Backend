@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    city:{
+      type: String,
+    },
+    zipcode:{
+      type: String,
+    },
     password: {
       type: String,
       required: [true, "Please provide a password"],

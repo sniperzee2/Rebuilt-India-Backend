@@ -242,6 +242,25 @@ exports.getUserByToken = async (req, res, next) => {
       }
 }
 
+exports.editUser = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(404).send("User Not Found");
+        }else{
+            const userUpdate = await User.findByIdAndUpdate(user._id, req.body, {new: true});
+            if(!userUpdate) return res.status(404).send("User Not Updated");
+            res.status(200).json({
+                message: "User updated successfully",
+                user: userUpdate,
+            })
+        }
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 exports.authPass = async (req, res, next) => {
     // 1) Getting token and check of it's there
     let token;
