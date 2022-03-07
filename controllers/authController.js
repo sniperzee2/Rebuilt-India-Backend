@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, res) => {
     };
     const token = signToken(data);
 
-    return res.status(statusCode).json({
+    res.status(statusCode).json({
         status: "success",
         token,
         user,
@@ -94,7 +94,6 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
 
 //Login via email and password
 exports.loginWithEmail = async (req, res, next) => {
-    try {
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(404).json({
@@ -102,29 +101,26 @@ exports.loginWithEmail = async (req, res, next) => {
                 message: "Please provide Email and password",
             });
         }
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({
-                status: "fail",
-                message: `Incorrect email or password`,
-            });
+        try{
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(404).json({
+                    status: "fail",
+                    message: `Incorrect email or password`,
+                });
+            }
+            const correct = await user.correctPassword(password, user.password);
+            if (!correct) {
+                return res.status(404).json({
+                    status: "fail",
+                    message: `Incorrect email or password`,
+                });
+            }
+            createSendToken(user, 200, res);
+        }catch(err){
+            console.log(err)
+            return res.status(500).json({ message: "Internal server error" });
         }
-        const correct = await user.correctPassword(password, user.password);
-        createSendToken(user, 200, res);
-        if (!correct) {
-            return res.status(404).json({
-                status: "fail",
-                message: `Incorrect email or password`,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(404).json({
-            status: "fail",
-            message: error,
-        });
-    }
 };
 
 //Login via phone and OTP
