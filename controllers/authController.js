@@ -86,16 +86,16 @@ exports.SendOTPOnLogin = async (req, res, next) => {
 exports.VerifyOTPOnSignUp = async (req, res, next) => {
     const {otp,hash,phone,name,email,password} = req.body;
     console.log(hash)
-    if(!otp || !hash || !phone) return res.status(400).json({ message: "Invalid request" });
+    if(!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
     const [hashedOtp, expires] = hash.split('.');
 
-    if(Date.now() > +expires) return res.status(400).json({ message: "Otp expired" });
+    if(Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
 
     const data = `${phone}${otp}${expires}`;
 
     const isValid = await otpService.verifyOtp(data, hashedOtp);
 
-    if(!isValid) return res.status(400).json({ message: "Invalid otp" });
+    if(!isValid) return res.status(200).json({ message: "Invalid otp" });
 
     let userPhone = await User.findOne({ phone });
     let userEmail = await User.findOne({ email });
@@ -113,7 +113,7 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
             return res.status(500).json({ message: "Internal server error" });
         }
     }else{
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(200).json({ message: "User already exists" });
     }
 };
 
@@ -131,7 +131,7 @@ exports.loginWithEmail = async (req, res, next) => {
             if (!user) {
                 return res.status(200).json({
                     status: "fail",
-                    message: `Incorrect email or password`,
+                    message: `No user found please register`,
                 });
             }
             const correct = await user.correctPassword(password, user.password);
