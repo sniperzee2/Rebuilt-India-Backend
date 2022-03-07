@@ -249,7 +249,7 @@ exports.editUser = async (req, res, next) => {
             return res.status(404).send("User Not Found");
         }else{
             const userUpdate = await User.findByIdAndUpdate(user._id, req.body, {new: true});
-            if(!userUpdate) return res.status(404).send("User Not Updated");
+            if(!userUpdate) return res.status(200).send("User Not Updated");
             res.status(200).json({
                 message: "User updated successfully",
                 user: userUpdate,
