@@ -153,19 +153,19 @@ exports.loginWithPhone = async (req, res, next) => {
     try {
         const {otp,hash,phone} = req.body;
         console.log(hash)
-        if(!otp || !hash || !phone) return res.status(400).json({ message: "Invalid request" });
+        if(!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
         const [hashedOtp, expires] = hash.split('.');
     
-        if(Date.now() > +expires) return res.status(400).json({ message: "Otp expired" });
+        if(Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
     
         const data = `${phone}${otp}${expires}`;
     
         const isValid = await otpService.verifyOtp(data, hashedOtp);
     
-        if(!isValid) return res.status(400).json({ message: "Invalid otp" });
+        if(!isValid) return res.status(200).json({ message: "Invalid otp" });
 
         const user = await User.findOne({ phone });
-        if(!user) return res.status(404).json({ message: "User not found" });
+        if(!user) return res.status(200).json({ message: "User not found" });
 
         createSendToken(user, 200, res);
     
