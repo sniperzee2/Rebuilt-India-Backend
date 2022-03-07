@@ -96,7 +96,7 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
 exports.loginWithEmail = async (req, res, next) => {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(404).json({
+            return res.status(200).json({
                 status: "fail",
                 message: "Please provide Email and password",
             });
@@ -104,14 +104,14 @@ exports.loginWithEmail = async (req, res, next) => {
         try{
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(404).json({
+                return res.status(200).json({
                     status: "fail",
                     message: `Incorrect email or password`,
                 });
             }
             const correct = await user.correctPassword(password, user.password);
             if (!correct) {
-                return res.status(404).json({
+                return res.status(200).json({
                     status: "fail",
                     message: `Incorrect email or password`,
                 });
