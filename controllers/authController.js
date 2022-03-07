@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, res) => {
     };
     const token = signToken(data);
 
-    res.status(statusCode).json({
+    return res.status(statusCode).json({
         status: "success",
         token,
         user,
@@ -110,8 +110,6 @@ exports.loginWithEmail = async (req, res, next) => {
                 message: `Incorrect email or password`,
             });
         }
-        console.log(user.password)
-        console.log(password)
         const correct = await user.correctPassword(password, user.password);
         createSendToken(user, 200, res);
         if (!correct) {
