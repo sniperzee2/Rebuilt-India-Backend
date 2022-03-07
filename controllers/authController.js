@@ -290,7 +290,7 @@ exports.authPass = async (req, res, next) => {
         token = await req.headers.authorization.split(" ")[1];
     }
 
-    if (!token) {
+    if (!token || token === "null") {
         return res.status(400).json({
             message: "You aren't Logged In",
         });
