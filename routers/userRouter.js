@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const {SendOTP,VerifyOTPOnSignUp,loginWithEmail,loginWithPhone,forgotPassword,resetPassword,getUserByToken,authPass,editUser} = require('../controllers/authController');
+const {SendOTP,VerifyOTPOnSignUp,loginWithEmail,loginWithPhone,forgotPassword,resetPassword,getUserByToken,authPass,editUser, SendOTPOnLogin} = require('../controllers/authController');
 
 router.post('/sendOTP', SendOTP);
+router.post('/sendOTPOnLogin', SendOTPOnLogin);
 router.post('/verifyOTPOnSignUp', VerifyOTPOnSignUp);
 router.post('/loginWithEmail', loginWithEmail);
 router.post('/loginWithPhone', loginWithPhone);

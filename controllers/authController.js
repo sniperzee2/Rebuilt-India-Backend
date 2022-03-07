@@ -57,6 +57,31 @@ exports.SendOTP = async (req, res, next) => {
     }
 };
 
+exports.SendOTPOnLogin = async (req, res, next) => {
+    const { phone} = req.body;
+    const userPhone = await User.findOne({ phone });
+    if(!userPhone){
+        return res.status(200).json({ status: "Failed",message: "User not found" });
+    }
+    const otp = await otpService.generateOtp();
+    const expires = Date.now() + 1000*60*3;;
+    const data = `${phone}${otp}${expires}`;
+
+    const otpHash = await hashService.hashOtp(data);
+    try{
+        await otpService.sendOtp(phone, otp);  
+        res.status(200).json({
+            status: "Success",
+            hash: `${otpHash}.${expires}`,
+            phone,
+            otp
+         });  
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 //Verify hashed token and OTP
 exports.VerifyOTPOnSignUp = async (req, res, next) => {
     const {otp,hash,phone,name,email,password} = req.body;
