@@ -302,7 +302,7 @@ exports.authPass = async (req, res, next) => {
 
     // 3) Check if user still exists
     console.log(decoded);
-    const currentUser = await User.findById(decoded.id).populate('history').excludes('password');
+    const currentUser = await User.findById(decoded.id).populate('history');
 
 
     // 4) Check if user changed password after the token was issued
