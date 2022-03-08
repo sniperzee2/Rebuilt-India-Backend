@@ -179,7 +179,7 @@ exports.forgotPassword = async(req, res, next) => {
     // 1) Get user based on POSTed email
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
-        return res.status(400).json({
+        return res.status(200).json({
             status: "fail",
             message: "User with this email does not exist",
         })
