@@ -192,7 +192,7 @@ exports.forgotPassword = async(req, res, next) => {
     // 3) Send it to user's email
     const resetURL = `${req.protocol}://${req.get("host")}/api/users/resetPassword/${resetToken}`
 
-    const message = `Forgot your password? Click on the link and reset your password by entering your new password : ${resetURL}.\nIf you didn't forget your password, please ignore this email!`
+    const message = `Forgot your password? Click on the link ${resetURL} and reset your password by entering your new password and this code : ${resetToken}.\nIf you didn't forget your password, please ignore this email!`
 
     try {
         await sendEmail({
@@ -221,7 +221,7 @@ exports.forgotPassword = async(req, res, next) => {
 //Reset password
 exports.resetPassword = async(req, res, next) => {
     // 1) Get user based on the token
-    const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex")
+    const hashedToken = crypto.createHash("sha256").update(req.body.code).digest("hex")
 
     const user = await User.findOne({
         passwordResetToken: hashedToken,
@@ -230,7 +230,7 @@ exports.resetPassword = async(req, res, next) => {
 
     // 2) If token has not expired, and there is user, set the new password
     if (!user) {
-        return res.status(400).json({
+        return res.status(200).json({
             status: "fail",
             message: "Password reset token is invalid or has expired",
         })
