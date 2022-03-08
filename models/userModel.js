@@ -21,12 +21,15 @@ const userSchema = new mongoose.Schema(
     },
     address: {
       type: String,
+      default: ""
     },
     city:{
       type: String,
+      default: ""
     },
     zipcode:{
       type: String,
+      default: ""
     },
     password: {
       type: String,
