@@ -214,11 +214,11 @@ exports.authPassAdmin = async (req, res, next) => {
     }
 
     // 2) Verification token
-    console.log("My token", token);
+    // console.log("My token", token);
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 
     // 3) Check if admin still exists
-    console.log(decoded);
+    // console.log(decoded);
     const currentAdmin = await Admin.findById(decoded.id);
 
 
