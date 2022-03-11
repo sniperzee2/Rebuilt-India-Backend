@@ -9,7 +9,6 @@ const Cart = require("../models/cartModel");
 exports.createBookings = async (req, res) => {
     try {
         const All = req.user.cart
-        console.log(All,"Ujjwal")
         let b = []
         let fullBooking = await Fullbooking.create({
             priceToPay: req.user.priceToPay,
