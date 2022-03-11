@@ -301,8 +301,32 @@ exports.authPass = async (req, res, next) => {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
-    console.log(decoded);
-    const currentUser = await User.findById(decoded.id).populate('history');
+    // console.log(decoded);
+    const currentUser = await User.findById(decoded.id).populate({
+        path:"cart",
+        populate: [{
+            path: "service",
+            model: "Service"
+        }, {
+            path: "subservice",
+            model: "Subservice"
+        }, {
+            path: "category",
+            model: "Category"
+        }]
+    }).populate({
+        path: "history",
+        populate: [{
+            path: "service",
+            model: "Service"
+        }, {
+            path: "subservice",
+            model: "Subservice"
+        }, {
+            path: "category",
+            model: "Category"
+        }]
+    });
 
 
     // 4) Check if user changed password after the token was issued
@@ -310,7 +334,7 @@ exports.authPass = async (req, res, next) => {
     // GRANT ACCESS TO PROTECTED ROUTE
 
     req.user = currentUser;
-    // console.log("This is req.user from middlwwRE", req.user);
+    console.log("This is req.user from middlwwRE", req.user);
     res.locals.user = currentUser;
     console.log("Successfully Passed Middlware");
     next();

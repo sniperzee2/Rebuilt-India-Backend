@@ -12,7 +12,7 @@ const fullbookingSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Booking",
     }],
-    totalPrice:{
+    priceToPay:{
         type: String,
     },
     user:{

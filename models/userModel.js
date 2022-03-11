@@ -41,7 +41,15 @@ const userSchema = new mongoose.Schema(
     history:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Booking"
-    }]
+    }],
+    cart:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart"
+    }],
+    priceToPay: {
+      type: Number,
+      default: 0
+    }
   },
   { timestamps: true }
 );

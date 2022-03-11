@@ -28,6 +28,7 @@ app.use('/api/companyFAQs', require('./routers/companyFaqRouter'))
 app.use('/api/users', require('./routers/userRouter'))
 app.use('/api/bookings', require('./routers/bookingRouter'))
 app.use('/api/admins', require('./routers/adminRouter'))
+app.use('/api/cart', require('./routers/cartRouter'))
 
 const port = process.env.PORT || 8000
 app.listen(port,() => {

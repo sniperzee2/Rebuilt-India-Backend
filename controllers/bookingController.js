@@ -3,25 +3,47 @@ const Fullbooking = require("../models/fullBookingInfo");
 const User = require("../models/userModel");
 const pdfKit = require('pdfkit');
 const nodemailer = require('nodemailer');
+const Cart = require("../models/cartModel");
 
 
 exports.createBookings = async (req, res) => {
     try {
-        const All = req.body.allBookings
+        const All = req.user.cart
+        console.log(All,"Ujjwal")
         let b = []
         let fullBooking = await Fullbooking.create({
-            priceToPay: req.body.priceToPay,
-            user: req.body.userID,
+            priceToPay: req.user.priceToPay,
+            user: req.user.id,
             date: req.body.date,
             time: req.body.time,
         })
         for (let i = 0; i < All.length; i++) {
-            let booking = await Booking.create(All[i])
+            let booking
+            if(All[i].category){
+                booking = await Booking.create({
+                    service: All[i].service.id,
+                    subservice: All[i].subservice.id,
+                    category: All[i].category.id,
+                    issues: All[i].issues,
+                    quantity: All[i].quantity
+                })
+            }
+            else{
+                booking = await Booking.create({
+                    service: All[i].service.id,
+                    subservice: All[i].subservice.id,
+                    issues: All[i].issues,
+                    quantity: All[i].quantity
+                })
+            }
             fullBooking.bookings.push(booking)
+            await Cart.findByIdAndDelete(All[i]._id)
             await fullBooking.save()
         }
-        const user = await User.findById(req.body.userID).populate("history");
+        const user = await User.findById(req.user.id).populate("history");
         user.history.push(fullBooking)
+        user.cart = []
+        user.priceToPay = 0
         const userSaved = await user.save()
         if (fullBooking && userSaved) {
             res.status(200).json({
