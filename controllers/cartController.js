@@ -22,9 +22,7 @@ exports.addToCart = async (req, res) => {
             }]
         })
         const gotCart = currentUser.cart;
-        console.log(JSON.stringify(gotCart))
         for(let i=0; i<gotCart.length; i++){
-            console.log("Inside if Ujjwal")
             if(category ? gotCart[i].category?.id === category : gotCart[i].subservice.id === subservice){
                 
                 if(operation === "add"){
@@ -123,7 +121,6 @@ exports.clearCart = async (req, res) => {
         const gotCart = currentUser.cart;
         const len = gotCart.length;
         for(let i=len-1; i>=0; i--){
-            console.log(i,"Mere bhai")
             await Cart.findByIdAndDelete(gotCart[i]._id);
             // gotCart[i].remove();
             gotCart.splice(i, 1);
