@@ -50,7 +50,7 @@ exports.createBookings = async (req, res) => {
                 data: fullBooking
             })
         } else {
-            res.status(400).json({
+            res.status(200).json({
                 message: "Bookings Creation Failed"
             })
         }
