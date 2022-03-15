@@ -28,55 +28,55 @@ const createSendToken = (user, statusCode, res) => {
 
 //OTP send called and create hash and send otp
 exports.SendOTP = async (req, res, next) => {
-    const { phone,email } = req.body;
+    const { phone, email } = req.body;
     const userPhone = await User.findOne({ phone });
     const userEmail = await User.findOne({ email });
-    if(userPhone){
-        return res.status(200).json({ status: "Failed",message: "User already exists with this Phone number" });
+    if (userPhone) {
+        return res.status(200).json({ status: "Failed", message: "User already exists with this Phone number" });
     }
-    if(userEmail){
-        return res.status(200).json({ status: "Failed",message: "User already exists with this Email" });
+    if (userEmail) {
+        return res.status(200).json({ status: "Failed", message: "User already exists with this Email" });
     }
-    if(!phone) return res.status(200).json({ status: "Failed",message: "Phone number is required" });
+    if (!phone) return res.status(200).json({ status: "Failed", message: "Phone number is required" });
     const otp = await otpService.generateOtp();
-    const expires = Date.now() + 1000*60*3;; 
+    const expires = Date.now() + 1000 * 60 * 3;;
     const data = `${phone}${otp}${expires}`;
 
     const otpHash = await hashService.hashOtp(data);
-    try{
-        await otpService.sendOtp(phone, otp);  
+    try {
+        await otpService.sendOtp(phone, otp);
         res.status(200).json({
             status: "Success",
             hash: `${otpHash}.${expires}`,
             phone,
             otp
-         });  
-    }catch(err){
+        });
+    } catch (err) {
         console.log(err)
         return res.status(500).json({ message: "Internal server error" });
     }
 };
 
 exports.SendOTPOnLogin = async (req, res, next) => {
-    const { phone} = req.body;
+    const { phone } = req.body;
     const userPhone = await User.findOne({ phone });
-    if(!userPhone){
-        return res.status(200).json({ status: "Failed",message: "User not found" });
+    if (!userPhone) {
+        return res.status(200).json({ status: "Failed", message: "User not found" });
     }
     const otp = await otpService.generateOtp();
-    const expires = Date.now() + 1000*60*3;;
+    const expires = Date.now() + 1000 * 60 * 3;;
     const data = `${phone}${otp}${expires}`;
 
     const otpHash = await hashService.hashOtp(data);
-    try{
-        await otpService.sendOtp(phone, otp);  
+    try {
+        await otpService.sendOtp(phone, otp);
         res.status(200).json({
             status: "Success",
             hash: `${otpHash}.${expires}`,
             phone,
             otp
-         });  
-    }catch(err){
+        });
+    } catch (err) {
         console.log(err)
         return res.status(500).json({ message: "Internal server error" });
     }
@@ -84,23 +84,23 @@ exports.SendOTPOnLogin = async (req, res, next) => {
 
 //Verify hashed token and OTP
 exports.VerifyOTPOnSignUp = async (req, res, next) => {
-    const {otp,hash,phone,name,email,password} = req.body;
+    const { otp, hash, phone, name, email, password } = req.body;
     console.log(hash)
-    if(!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
+    if (!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
     const [hashedOtp, expires] = hash.split('.');
 
-    if(Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
+    if (Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
 
     const data = `${phone}${otp}${expires}`;
 
     const isValid = await otpService.verifyOtp(data, hashedOtp);
 
-    if(!isValid) return res.status(200).json({ message: "Invalid otp" });
+    if (!isValid) return res.status(200).json({ message: "Invalid otp" });
 
     let userPhone = await User.findOne({ phone });
     let userEmail = await User.findOne({ email });
-    if(!userPhone && !userEmail) {
-        try{
+    if (!userPhone && !userEmail) {
+        try {
             const user = await User.create({
                 name,
                 email,
@@ -108,74 +108,74 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
                 password,
             })
             createSendToken(user, 200, res);
-        }catch(err){
+        } catch (err) {
             console.log(err)
             return res.status(500).json({ message: "Internal server error" });
         }
-    }else{
+    } else {
         return res.status(200).json({ message: "User already exists" });
     }
 };
 
 //Login via email and password
 exports.loginWithEmail = async (req, res, next) => {
-        const { email, password } = req.body;
-        if (!email || !password) {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(200).json({
+            status: "fail",
+            message: "Please provide Email and password",
+        });
+    }
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(200).json({
                 status: "fail",
-                message: "Please provide Email and password",
+                message: `No user found please register`,
             });
         }
-        try{
-            const user = await User.findOne({ email });
-            if (!user) {
-                return res.status(200).json({
-                    status: "fail",
-                    message: `No user found please register`,
-                });
-            }
-            const correct = await user.correctPassword(password, user.password);
-            if (!correct) {
-                return res.status(200).json({
-                    status: "fail",
-                    message: `Incorrect email or password`,
-                });
-            }
-            createSendToken(user, 200, res);
-        }catch(err){
-            console.log(err)
-            return res.status(500).json({ message: "Internal server error" });
+        const correct = await user.correctPassword(password, user.password);
+        if (!correct) {
+            return res.status(200).json({
+                status: "fail",
+                message: `Incorrect email or password`,
+            });
         }
+        createSendToken(user, 200, res);
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 //Login via phone and OTP
 exports.loginWithPhone = async (req, res, next) => {
     try {
-        const {otp,hash,phone} = req.body;
+        const { otp, hash, phone } = req.body;
         console.log(hash)
-        if(!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
+        if (!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
         const [hashedOtp, expires] = hash.split('.');
-    
-        if(Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
-    
+
+        if (Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
+
         const data = `${phone}${otp}${expires}`;
-    
+
         const isValid = await otpService.verifyOtp(data, hashedOtp);
-    
-        if(!isValid) return res.status(200).json({ message: "Invalid otp" });
+
+        if (!isValid) return res.status(200).json({ message: "Invalid otp" });
 
         const user = await User.findOne({ phone });
-        if(!user) return res.status(200).json({ message: "User not found" });
+        if (!user) return res.status(200).json({ message: "User not found" });
 
         createSendToken(user, 200, res);
-    
+
     } catch (error) {
         res.status(400).send(error);
     }
 }
 
 //Forget password
-exports.forgotPassword = async(req, res, next) => {
+exports.forgotPassword = async (req, res, next) => {
     // 1) Get user based on POSTed email
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
@@ -219,7 +219,7 @@ exports.forgotPassword = async(req, res, next) => {
 }
 
 //Reset password
-exports.resetPassword = async(req, res, next) => {
+exports.resetPassword = async (req, res, next) => {
     // 1) Get user based on the token
     const hashedToken = crypto.createHash("sha256").update(req.body.code).digest("hex")
 
@@ -249,16 +249,16 @@ exports.getUserByToken = async (req, res, next) => {
     try {
         const user = req.user;
         if (!user) {
-          return res.status(404).send("User Not Found");
+            return res.status(404).send("User Not Found");
         }
-    
+
         res.json({
-          user,
+            user
         });
-      } catch (error) {
+    } catch (error) {
         console.log(error);
         res.status(error);
-      }
+    }
 }
 
 exports.editUser = async (req, res, next) => {
@@ -266,15 +266,15 @@ exports.editUser = async (req, res, next) => {
         const user = req.user;
         if (!user) {
             return res.status(404).send("User Not Found");
-        }else{
-            const userUpdate = await User.findByIdAndUpdate(user._id, req.body, {new: true});
-            if(!userUpdate) return res.status(200).send("User Not Updated");
+        } else {
+            const userUpdate = await User.findByIdAndUpdate(user._id, req.body, { new: true });
+            if (!userUpdate) return res.status(200).send("User Not Updated");
             res.status(200).json({
                 message: "User updated successfully",
                 user: userUpdate,
             })
         }
-    }catch(err){
+    } catch (err) {
         console.log(err)
         return res.status(500).json({ message: "Internal server error" });
     }
@@ -297,45 +297,68 @@ exports.authPass = async (req, res, next) => {
     }
 
     // 2) Verification token
-    console.log("My token", token);
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-
+    let decoded;
+    try {
+        decoded = await jwt.verify(token, process.env.JWT_SECRET)
+    } catch (e) {
+        if (e instanceof jwt.JsonWebTokenError) {
+            return res.status(200).json({
+                status: "fail",
+                message: "Session expired"
+            })
+        }
+        return res.status(200).json({
+            status: "fail",
+            message: "An error occured"
+        })
+    }
+    // console.log("My decoded", decoded);
+    // GRANT ACCESS TO PROTECTED ROUTE
     // 3) Check if user still exists
     // console.log(decoded);
-    const currentUser = await User.findById(decoded.id).populate({
-        path:"cart",
-        populate: [{
-            path: "service",
-            model: "Service"
-        }, {
-            path: "subservice",
-            model: "Subservice"
-        }, {
-            path: "category",
-            model: "Category"
-        }]
-    }).populate({
-        path: "history",
-        populate: [{
-            path: "service",
-            model: "Service"
-        }, {
-            path: "subservice",
-            model: "Subservice"
-        }, {
-            path: "category",
-            model: "Category"
-        }]
-    });
-
-
-    // 4) Check if user changed password after the token was issued
-
-    // GRANT ACCESS TO PROTECTED ROUTE
-
-    req.user = currentUser;
-    console.log("This is req.user from middlwwRE", req.user);
-    res.locals.user = currentUser;
-    console.log("Successfully Passed Middlware");
-    next();
+    try{
+        const currentUser = await User.findById(decoded.id).populate({
+            path: "cart",
+            populate: [{
+                path: "service",
+                model: "Service"
+            }, {
+                path: "subservice",
+                model: "Subservice"
+            }, {
+                path: "category",
+                model: "Category"
+            }]
+        }).populate({
+            path: "history",
+            populate: [{
+                path: "bookings",
+                populate: [{
+                    path: "service",
+                    model: "Service"
+                },{
+                    path: "subservice",
+                    model: "Subservice"
+                },{
+                    path: "category",
+                    model: "Category"
+                }]
+            }]
+        });
+    
+    
+        // 4) Check if user changed password after the token was issued
+    
+        req.user = currentUser;
+        // console.log("This is req.user from middlwwRE", req.user);
+        res.locals.user = currentUser;
+        console.log("Successfully Passed Middlware");
+        next();
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            status: "fail",
+            message: err.message
+        });
+    }
 };

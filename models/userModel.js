@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: Date,
     history:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking"
+        ref: "Fullbooking"
     }],
     cart:[{
         type: mongoose.Schema.Types.ObjectId,
