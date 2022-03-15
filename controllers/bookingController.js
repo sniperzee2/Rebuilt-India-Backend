@@ -320,3 +320,30 @@ exports.createPDF = async (req, res) => {
     await transporter.sendMail(mailOptions);
     return res.sendStatus(200)
 }
+
+exports.cancelBooking = async (req, res) => {
+    try{
+        const {bookingID,userID} = req.body;
+        const booking = await Booking.findById(bookingID);
+
+        if(!booking){
+            return res.status(200).json({
+                message: "Booking not found"
+            })
+        }
+        if(userID == req.user._id){     
+            booking.status = "Cancelled";
+            await booking.save();
+            return res.status(200).json({
+                message: "Booking cancelled successfully"
+            })
+        }else{
+            return res.status(200).json({
+                message: "You are not authorized to cancel this booking"
+            })
+        }
+    }catch(err){
+        console.log(err);
+        res.status(500).send(err);
+    }
+}
