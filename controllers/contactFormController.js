@@ -1,13 +1,12 @@
-const Form = require('../models/formModel');
+const ContactForm = require('../models/contactFormModel');
 
 exports.createRequest = async (req, res) => {
     try{
-        const {name,phone,address,service} = req.body;
-        const form = new Form({
+        const {name,email,review} = req.body;
+        const form = new ContactForm({
             name,
-            phone,
-            address,
-            service
+            email,
+            review
         });
         const formCreated = await form.save();
         if (formCreated) {
@@ -31,42 +30,12 @@ exports.createRequest = async (req, res) => {
 
 exports.getAllRequests = async (req, res) => {
     try{
-        const form = await Form.find();
+        const form = await ContactForm.find();
         if(form){
             res.status(200).json({
                 message: "Request Fetched Successfully",
                 data: form
             });
-        }else{
-            res.status(404).json({
-                message: "Request Not Found"
-            })
-        }
-    }catch(err){
-        console.log(err)
-        res.status(500).json({
-            status: "error",
-            message: err.message
-        })
-    }
-}
-
-exports.updateStatus = async (req, res) => {
-    try{
-        const form = await Form.findById(req.params.id);
-        if(form){
-            form.status = req.body.status;
-            const formUpdated = await form.save();
-            if (formUpdated) {
-                res.status(200).json({
-                    message: "Request Updated Successfully",
-                    data: formUpdated
-                });
-            } else {
-                res.status(400).json({
-                    message: "Request Updation Failed"
-                })
-            }
         }else{
             res.status(404).json({
                 message: "Request Not Found"

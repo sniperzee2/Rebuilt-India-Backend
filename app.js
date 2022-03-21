@@ -30,6 +30,11 @@ app.use('/api/bookings', require('./routers/bookingRouter'))
 app.use('/api/admins', require('./routers/adminRouter'))
 app.use('/api/cart', require('./routers/cartRouter'))
 
+//Forms
+app.use('/api/contactForms', require('./routers/contactFormRouter'))
+app.use('/api/partnerForms', require('./routers/partnerFormRouter'))
+app.use('/api/coorporateForms', require('./routers/coorporateFormRouter'))
+
 const port = process.env.PORT || 8000
 app.listen(port,() => {
   console.log(`Server running on PORT ${port}`)
