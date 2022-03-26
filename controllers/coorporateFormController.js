@@ -2,7 +2,7 @@ const CoorporateForm = require('../models/coorporateFormModel');
 
 exports.createRequest = async (req, res) => {
     try{
-        const {name,email,review} = req.body;
+        const {name,email,phone,company} = req.body;
         const form = new CoorporateForm({
             name,
             email,
