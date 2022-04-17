@@ -29,6 +29,7 @@ app.use('/api/users', require('./routers/userRouter'))
 app.use('/api/bookings', require('./routers/bookingRouter'))
 app.use('/api/admins', require('./routers/adminRouter'))
 app.use('/api/cart', require('./routers/cartRouter'))
+app.use('/api/seo', require('./routers/seoRouter'))
 
 //Forms
 app.use('/api/contactForms', require('./routers/contactFormRouter'))

@@ -5,7 +5,7 @@ const {createService,getServices,getServicesByID,editService,deleteService} = re
 
 router.post('/create',upload.single('file'),createService)
 router.get('/getAll',getServices)
-router.get('/getOne/:id',getServicesByID)
+router.get('/getOne/:id/:city',getServicesByID)
 router.put('/update/:id',upload.single('file'),editService)
 router.delete('/delete/:id',deleteService)
 

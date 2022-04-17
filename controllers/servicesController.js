@@ -1,4 +1,5 @@
 const Service = require("../models/servicesModel");
+const Seo = require("../models/seoModel");
 
 exports.createService = async (req, res) => {
     try{
@@ -65,9 +66,12 @@ exports.getServicesByID = async (req, res) => {
             model: 'Category'
         }]
     }).populate('faqs').populate('blogs').populate('problems').populate('rates');
+
+    const seo = await Seo.findOne({serviceID: req.params.id, city: req.params.city});
         res.status(200).json({
             message: "Service Fetched Successfully",
-            data: service
+            data: service,
+            meta: seo
         });
     }catch(err){
         console.log(err)
