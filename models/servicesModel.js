@@ -30,7 +30,10 @@ const serviceSchema = new mongoose.Schema({
     rates:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Rate'
-    }]
+    }],
+    slug:{
+        type: String
+    }
 
 }, {
   timestamps: true

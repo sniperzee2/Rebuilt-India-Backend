@@ -85,11 +85,21 @@ exports.getServicesByID = async (req, res) => {
 exports.editService = async (req, res) => {
     try{
             const s = await Service.findById(req.params.id);
-            const service = await Service.findByIdAndUpdate(req.params.id, {
-                name: req.body.name || s.name,
-                description: req.body.description || s.description,
-                image: `/images/${req.file?.filename.replace(/ /g, "_")}` || s.image,
-            },{new: true});
+            let service;
+            if(req.file){
+                service = await Service.findByIdAndUpdate(req.params.id, {
+                    name: req.body.name || s.name,
+                    description: req.body.description || s.description,
+                    image: `/images/${req.file?.filename.replace(/ /g, "_")}` || s.image,
+                    slug: req.body.slug || s.slug
+                },{new: true});
+            }else{
+                service = await Service.findByIdAndUpdate(req.params.id, {
+                    name: req.body.name || s.name,
+                    description: req.body.description || s.description,
+                    slug: req.body.slug || s.slug
+                },{new: true});
+            }
         res.status(200).json({
             message: "Service Updated Successfully",
             data: service
