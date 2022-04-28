@@ -61,7 +61,7 @@ exports.SendOTPOnLogin = async (req, res, next) => {
     const { phone } = req.body;
     const userPhone = await User.findOne({ phone });
     if (!userPhone) {
-        return res.status(200).json({ status: "Failed", message: "User not found" });
+        return res.status(200).json({ status: "Failed", message: "Please Register with this mobile number" });
     }
     const otp = await otpService.generateOtp();
     const expires = Date.now() + 1000 * 60 * 3;;
