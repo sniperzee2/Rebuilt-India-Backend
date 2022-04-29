@@ -4,7 +4,7 @@ const {authPass} = require('../controllers/authController');
 const {authPassAdmin} = require('../controllers/adminController');
 
 router.post('/',authPass, createBookings);
-router.get('/getAll',authPassAdmin,showAllBookingsToAdmin);
+router.get('/getAll',showAllBookingsToAdmin);
 router.put('/edit/:id',authPassAdmin,editBookingByAdmin);
 router.post('/add/:id',authPassAdmin,addAdditionBookingsFromAdmin);
 router.post('/pdf',createPDF)
