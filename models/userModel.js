@@ -31,10 +31,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: ""
     },
-    password: {
-      type: String,
-      required: [true, "Please provide a password"],
-    },
+    // password: {
+    //   type: String,
+    //   required: [true, "Please provide a password"],
+    // },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -54,18 +54,18 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.password) next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
-});
+// userSchema.pre("save", async function (next) {
+//   if (!this.password) next();
+//   this.password = await bcrypt.hash(this.password, 12);
+//   next();
+// });
 
-userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
+// userSchema.methods.correctPassword = async function (
+//   candidatePassword,
+//   userPassword
+// ) {
+//   return await bcrypt.compare(candidatePassword, userPassword);
+// };
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex")

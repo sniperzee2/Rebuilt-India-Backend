@@ -28,15 +28,7 @@ const createSendToken = (user, statusCode, res) => {
 
 //OTP send called and create hash and send otp
 exports.SendOTP = async (req, res, next) => {
-    const { phone, email } = req.body;
-    const userPhone = await User.findOne({ phone });
-    const userEmail = await User.findOne({ email });
-    if (userPhone) {
-        return res.status(200).json({ status: "Failed", message: "User already exists with this Phone number" });
-    }
-    if (userEmail) {
-        return res.status(200).json({ status: "Failed", message: "User already exists with this Email" });
-    }
+    const { phone } = req.body;
     if (!phone) return res.status(200).json({ status: "Failed", message: "Phone number is required" });
     const otp = await otpService.generateOtp();
     const expires = Date.now() + 1000 * 60 * 3;;
@@ -57,34 +49,34 @@ exports.SendOTP = async (req, res, next) => {
     }
 };
 
-exports.SendOTPOnLogin = async (req, res, next) => {
-    const { phone } = req.body;
-    const userPhone = await User.findOne({ phone });
-    if (!userPhone) {
-        return res.status(200).json({ status: "Failed", message: "Please Register with this mobile number" });
-    }
-    const otp = await otpService.generateOtp();
-    const expires = Date.now() + 1000 * 60 * 3;;
-    const data = `${phone}${otp}${expires}`;
+// exports.SendOTPOnLogin = async (req, res, next) => {
+//     const { phone } = req.body;
+//     const userPhone = await User.findOne({ phone });
+//     if (!userPhone) {
+//         return res.status(200).json({ status: "Failed", message: "Please Register with this mobile number" });
+//     }
+//     const otp = await otpService.generateOtp();
+//     const expires = Date.now() + 1000 * 60 * 3;;
+//     const data = `${phone}${otp}${expires}`;
 
-    const otpHash = await hashService.hashOtp(data);
-    try {
-        await otpService.sendOtp(phone, otp);
-        res.status(200).json({
-            status: "Success",
-            hash: `${otpHash}.${expires}`,
-            phone,
-            otp
-        });
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
+//     const otpHash = await hashService.hashOtp(data);
+//     try {
+//         await otpService.sendOtp(phone, otp);
+//         res.status(200).json({
+//             status: "Success",
+//             hash: `${otpHash}.${expires}`,
+//             phone,
+//             otp
+//         });
+//     } catch (err) {
+//         console.log(err)
+//         return res.status(500).json({ message: "Internal server error" });
+//     }
+// }
 
 //Verify hashed token and OTP
-exports.VerifyOTPOnSignUp = async (req, res, next) => {
-    const { otp, hash, phone, name, email, password } = req.body;
+exports.VerifyOTP = async (req, res, next) => {
+    const { otp, hash, phone} = req.body;
     console.log(hash)
     if (!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
     const [hashedOtp, expires] = hash.split('.');
@@ -98,14 +90,10 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
     if (!isValid) return res.status(200).json({ message: "Invalid otp" });
 
     let userPhone = await User.findOne({ phone });
-    let userEmail = await User.findOne({ email });
-    if (!userPhone && !userEmail) {
+    if (!userPhone) {
         try {
             const user = await User.create({
-                name,
-                email,
                 phone,
-                password,
             })
             createSendToken(user, 200, res);
         } catch (err) {
@@ -113,66 +101,67 @@ exports.VerifyOTPOnSignUp = async (req, res, next) => {
             return res.status(500).json({ message: "Internal server error" });
         }
     } else {
-        return res.status(200).json({ message: "User already exists" });
+        const user = await User.findOne({ phone });
+        createSendToken(user, 200, res);
     }
 };
 
 //Login via email and password
-exports.loginWithEmail = async (req, res, next) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(200).json({
-            status: "fail",
-            message: "Please provide Email and password",
-        });
-    }
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(200).json({
-                status: "fail",
-                message: `No user found please register`,
-            });
-        }
-        const correct = await user.correctPassword(password, user.password);
-        if (!correct) {
-            return res.status(200).json({
-                status: "fail",
-                message: `Incorrect email or password`,
-            });
-        }
-        createSendToken(user, 200, res);
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal server error" });
-    }
-};
+// exports.loginWithEmail = async (req, res, next) => {
+//     const { email, password } = req.body;
+//     if (!email || !password) {
+//         return res.status(200).json({
+//             status: "fail",
+//             message: "Please provide Email and password",
+//         });
+//     }
+//     try {
+//         const user = await User.findOne({ email });
+//         if (!user) {
+//             return res.status(200).json({
+//                 status: "fail",
+//                 message: `No user found please register`,
+//             });
+//         }
+//         const correct = await user.correctPassword(password, user.password);
+//         if (!correct) {
+//             return res.status(200).json({
+//                 status: "fail",
+//                 message: `Incorrect email or password`,
+//             });
+//         }
+//         createSendToken(user, 200, res);
+//     } catch (err) {
+//         console.log(err)
+//         return res.status(500).json({ message: "Internal server error" });
+//     }
+// };
 
 //Login via phone and OTP
-exports.loginWithPhone = async (req, res, next) => {
-    try {
-        const { otp, hash, phone } = req.body;
-        console.log(hash)
-        if (!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
-        const [hashedOtp, expires] = hash.split('.');
+// exports.loginWithPhone = async (req, res, next) => {
+//     try {
+//         const { otp, hash, phone } = req.body;
+//         console.log(hash)
+//         if (!otp || !hash || !phone) return res.status(200).json({ message: "Invalid request" });
+//         const [hashedOtp, expires] = hash.split('.');
 
-        if (Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
+//         if (Date.now() > +expires) return res.status(200).json({ message: "Otp expired" });
 
-        const data = `${phone}${otp}${expires}`;
+//         const data = `${phone}${otp}${expires}`;
 
-        const isValid = await otpService.verifyOtp(data, hashedOtp);
+//         const isValid = await otpService.verifyOtp(data, hashedOtp);
 
-        if (!isValid) return res.status(200).json({ message: "Invalid otp" });
+//         if (!isValid) return res.status(200).json({ message: "Invalid otp" });
 
-        const user = await User.findOne({ phone });
-        if (!user) return res.status(200).json({ message: "User not found" });
+//         const user = await User.findOne({ phone });
+//         if (!user) return res.status(200).json({ message: "User not found" });
 
-        createSendToken(user, 200, res);
+//         createSendToken(user, 200, res);
 
-    } catch (error) {
-        res.status(400).send(error);
-    }
-}
+//     } catch (error) {
+//         res.status(400).send(error);
+//     }
+// }
 
 //Forget password
 exports.forgotPassword = async (req, res, next) => {
