@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      validator: [validator.isEmail, "Please provide a valid email"],
-      lowercase: true,
+      default: ""
     },
     phone: {
       type: String,
