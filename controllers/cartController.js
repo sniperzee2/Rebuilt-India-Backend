@@ -80,7 +80,6 @@ exports.addToCart = async (req, res) => {
                 service,
                 subservice,
                 quantity: 1,
-                priceToPay
             })
             
             currentUser.priceToPay += Number(newSubservice.price)
