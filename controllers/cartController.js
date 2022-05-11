@@ -76,7 +76,6 @@ exports.addToCart = async (req, res) => {
         }
         else{
             const newSubservice = await Subservice.findById(subservice);
-            let priceToPay = Number(newSubservice.price);
             newCart = new Cart({
                 service,
                 subservice,
